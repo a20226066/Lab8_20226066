@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head('Mi perfil')"></head>
+<body>
+<nav th:replace="base :: navbar"></nav>
+
+<div class="container mt-4" style="max-width: 600px">
+    <h3>Mi perfil</h3>
+    <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success"></div>
+
+    <p class="mb-1"><b>Correo:</b> <span th:text="${usuario.email}"></span></p>
+    <p><b>Rol:</b> <span th:text="${usuario.id_role.role_name}"></span></p>
+    <hr/>
+
+    <form method="post" th:action="@{/user/guardar}" th:object="${usuario}">
+        <div class="form-group">
+            <label for="firstname">Nombre</label>
+            <input type="text" class="form-control" th:field="*{firstname}" required>
+        </div>
+        <div class="form-group">
+            <label for="lastname">Apellido</label>
+            <input type="text" class="form-control" th:field="*{lastname}" required>
+        </div>
+        <div class="form-group">
+            <label for="intro">Texto de introducción</label>
+            <input type="text" class="form-control" th:field="*{intro}">
+        </div>
+        <div class="form-group">
+            <label for="profile">Texto de perfil</label>
+            <textarea class="form-control" rows="3" th:field="*{profile}"></textarea>
+        </div>
+        <a th:href="@{/post}" class="btn btn-secondary">Volver</a>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </form>
+</div>
+</body>
+</html>

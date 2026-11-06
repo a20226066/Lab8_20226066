@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head('Usuarios')"></head>
+<body>
+<nav th:replace="base :: navbar"></nav>
+
+<div class="container mt-4">
+    <h3>Lista de usuarios</h3>
+
+    <table class="table table-bordered table-sm">
+        <thead class="thead-light">
+        <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Activo</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="usuario, info : ${listausuarios}">
+            <td th:text="${info.count}"></td>
+            <td th:text="${usuario.id_user}"></td>
+            <td th:text="${usuario.firstname}"></td>
+            <td th:text="${usuario.lastname}"></td>
+            <td th:text="${usuario.email}"></td>
+            <td th:text="${usuario.id_role.role_name}"></td>
+            <td th:text="${usuario.active} ? 'Sí' : 'No'"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

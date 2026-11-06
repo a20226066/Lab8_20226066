@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head('Lista de posts')"></head>
+<body>
+<nav th:replace="base :: navbar"></nav>
+
+<div class="container mt-4">
+    <h3>Lista de posts</h3>
+
+    <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success"></div>
+    <div th:if="${msgError != null}" th:text="${msgError}" class="alert alert-danger"></div>
+
+    <a th:if="${session.usuario != null}" th:href="@{/post/create}" class="btn btn-primary mb-3">Nuevo post</a>
+
+    <table class="table table-bordered table-sm">
+        <thead class="thead-light">
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Resumen</th>
+            <th>Estado</th>
+            <th th:if="${session.usuario != null}">Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${lista}">
+            <td th:text="${p.id_Post}"></td>
+            <td th:text="${p.title}"></td>
+            <td th:text="|${p.user.firstname} ${p.user.lastname}|"></td>
+            <td th:text="${p.summary}"></td>
+            <td th:text="${p.published} ? 'Publicado' : 'Borrador'"></td>
+            <td th:if="${session.usuario != null}" class="text-nowrap">
+                <!-- Editar: solo el autor -->
+                <a th:if="${p.user.id_user == session.usuario.id_user}"
+                   th:href="@{/post/edit(id=${p.id_Post})}" class="btn btn-sm btn-primary">Editar</a>
+                <!-- Eliminar: el autor o el admin -->
+                <form th:if="${session.rol == 'admin' or p.user.id_user == session.usuario.id_user}"
+                      th:action="@{/post/borrar}" method="post" class="d-inline">
+                    <input type="hidden" name="id" th:value="${p.id_Post}">
+                    <button type="submit" class="btn btn-sm btn-danger"
+                            onclick="return confirm('¿Eliminar este post?')">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      # El script crea la BD Lab5 y carga los datos la primera vez
+      - ./Lab5_script.sql:/docker-entrypoint-initdb.d/Lab5_script.sql
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"   # 3307 para no chocar con un MySQL local
+    healthcheck:
+      # La BD esta lista cuando ya existe la tabla post
+      test: ["CMD", "mysql", "-h", "127.0.0.1", "-uroot", "-proot", "-e", "SELECT 1 FROM Lab5.post LIMIT 1"]
+      interval: 5s
+      retries: 30
+
+  app:
+    build: .
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:

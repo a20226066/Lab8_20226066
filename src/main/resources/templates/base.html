@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/custom.css}"/>
+    <script th:src="@{/js/jquery-3.4.1.min.js}"></script>
+    <script th:src="@{/js/popper.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <title th:text="${titulo}">Blog Telecom</title>
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark navbar-expand-sm fixed-top" th:fragment="navbar">
+    <a class="navbar-brand" th:href="@{/post}">Blog Telecom</a>
+
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/post}">Listar posts</a>
+        </li>
+        <li class="nav-item" th:if="${session.rol == 'admin' or session.rol == 'user'}">
+            <a class="nav-link" th:href="@{/post/create}">Crear post</a>
+        </li>
+        <li class="nav-item" th:if="${session.rol == 'admin' or session.rol == 'user'}">
+            <a class="nav-link" th:href="@{/user/perfil}">Mi perfil</a>
+        </li>
+        <li class="nav-item" th:if="${session.rol == 'admin' or session.rol == 'user'}">
+            <a class="nav-link" th:href="@{/amistad}">Amistades</a>
+        </li>
+        <li class="nav-item" th:if="${session.rol == 'admin'}">
+            <a class="nav-link" th:href="@{/user/list}">Listar usuarios</a>
+        </li>
+    </ul>
+
+    <!-- Visitante sin sesion -->
+    <a th:if="${session.usuario == null}" th:href="@{/loginForm}" class="btn btn-info">Iniciar sesión</a>
+
+    <!-- Usuario logueado: datos guardados en la sesion -->
+    <form th:if="${session.usuario != null}" th:action="@{/logout}" method="post" class="form-inline">
+        <span class="navbar-text text-light mr-3"
+              th:text="|Bienvenido ${session.usuario.firstname} ${session.usuario.lastname} (${session.rol})|">Bienvenido</span>
+        <button type="submit" class="btn btn-outline-light btn-sm">Cerrar sesión</button>
+    </form>
+</nav>
+</body>
+</html>

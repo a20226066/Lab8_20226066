@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="base :: head('Amistades')"></head>
+<body>
+<nav th:replace="base :: navbar"></nav>
+
+<div class="container mt-4">
+    <h3>Amistades</h3>
+
+    <div th:if="${msg != null}" th:text="${msg}" class="alert alert-success"></div>
+    <div th:if="${msgError != null}" th:text="${msgError}" class="alert alert-danger"></div>
+
+    <div class="row">
+        <!-- Solicitudes recibidas: aceptar / rechazar -->
+        <div class="col-md-6 mb-4">
+            <h5>Solicitudes recibidas</h5>
+            <p th:if="${recibidas.isEmpty()}" class="text-muted">No tienes solicitudes pendientes.</p>
+            <table th:unless="${recibidas.isEmpty()}" class="table table-sm table-bordered">
+                <tr th:each="s : ${recibidas}">
+                    <td th:text="|${s.sender.firstname} ${s.sender.lastname}|"></td>
+                    <td th:text="${#temporals.format(s.created_at, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td class="text-nowrap">
+                        <form th:action="@{/amistad/aceptar}" method="post" class="d-inline">
+                            <input type="hidden" name="id" th:value="${s.id_request}">
+                            <button type="submit" class="btn btn-sm btn-success">Aceptar</button>
+                        </form>
+                        <form th:action="@{/amistad/rechazar}" method="post" class="d-inline">
+                            <input type="hidden" name="id" th:value="${s.id_request}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Rechazar</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Solicitudes enviadas: cancelar -->
+        <div class="col-md-6 mb-4">
+            <h5>Solicitudes enviadas</h5>
+            <p th:if="${enviadas.isEmpty()}" class="text-muted">No has enviado solicitudes pendientes.</p>
+            <table th:unless="${enviadas.isEmpty()}" class="table table-sm table-bordered">
+                <tr th:each="s : ${enviadas}">
+                    <td th:text="|${s.receiver.firstname} ${s.receiver.lastname}|"></td>
+                    <td th:text="${#temporals.format(s.created_at, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td>
+                        <form th:action="@{/amistad/cancelar}" method="post">
+                            <input type="hidden" name="id" th:value="${s.id_request}">
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">Cancelar</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Mis amigos -->
+        <div class="col-md-6 mb-4">
+            <h5>Mis amigos</h5>
+            <p th:if="${amigos.isEmpty()}" class="text-muted">Todavía no tienes amigos.</p>
+            <ul th:unless="${amigos.isEmpty()}" class="list-group">
+                <!-- El amigo es "el otro" de la solicitud -->
+                <li th:each="s : ${amigos}" class="list-group-item"
+                    th:with="amigo=${s.sender.id_user == session.usuario.id_user} ? ${s.receiver} : ${s.sender}"
+                    th:text="|${amigo.firstname} ${amigo.lastname}|"></li>
+            </ul>
+        </div>
+
+        <!-- Enviar solicitud -->
+        <div class="col-md-6 mb-4">
+            <h5>Enviar solicitud</h5>
+            <p th:if="${disponibles.isEmpty()}" class="text-muted">No hay más usuarios disponibles.</p>
+            <table th:unless="${disponibles.isEmpty()}" class="table table-sm table-bordered">
+                <tr th:each="u : ${disponibles}">
+                    <td th:text="|${u.firstname} ${u.lastname}|"></td>
+                    <td>
+                        <form th:action="@{/amistad/enviar}" method="post">
+                            <input type="hidden" name="idReceptor" th:value="${u.id_user}">
+                            <button type="submit" class="btn btn-sm btn-primary">Enviar solicitud</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
